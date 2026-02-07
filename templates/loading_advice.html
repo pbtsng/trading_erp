@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h3>Loading Advice</h3>
+
+<form method="post">
+
+<input type="date" name="date" class="form-control mb-2" required>
+<input name="vehicle" class="form-control mb-3" placeholder="Vehicle No" required>
+
+<table class="table table-bordered" id="grid">
+
+<tr class="table-dark text-center">
+<th colspan="4">SALE ORDER</th>
+<th colspan="5">PURCHASE ORDER</th>
+<th colspan="3">LOADING</th>
+</tr>
+
+<tr>
+<th>SO No</th>
+<th>Customer</th>
+<th>SO Bal Qty</th>
+<th>SO Rate</th>
+
+<th>PO No</th>
+<th>Supplier</th>
+<th>PO Bal Qty</th>
+<th>PO Rate</th>
+<th>Item</th>
+
+<th>Section</th>
+<th>Batch</th>
+<th>Load Qty</th>
+</tr>
+
+<tr>
+
+<td>
+<select name="so_id" onchange="loadSO(this)">
+<option value="">Select</option>
+{% for s in sales %}
+<option value="{{s[0]}}">{{s[0]}}</option>
+{% endfor %}
+</select>
+</td>
+
+<td><input class="cust form-control" readonly></td>
+<td><input class="sbal form-control" readonly></td>
+<td><input class="srate form-control" readonly></td>
+
+<td>
+<select name="po_id" onchange="loadPO(this)">
+<option value="">Select</option>
+{% for p in purchases %}
+<option value="{{p[0]}}">{{p[0]}}</option>
+{% endfor %}
+</select>
+</td>
+
+<td><input class="sup form-control" readonly></td>
+<td><input class="pbal form-control" readonly></td>
+<td><input class="prate form-control" readonly></td>
+<td><input name="item" class="item form-control" readonly></td>
+
+<td><input name="section" class="form-control"></td>
+<td><input name="batch" class="form-control"></td>
+<td><input name="qty" class="form-control"></td>
+
+</tr>
+
+</table>
+
+<button type="button" class="btn btn-secondary" onclick="addRow()">Add Row</button>
+<button class="btn btn-success">Save Loading Advice</button>
+
+</form>
+
+<script>
+
+function loadSO(sel){
+ if(sel.value=="") return;
+ fetch("/get_so/"+sel.value)
+ .then(r=>r.json())
+ .then(d=>{
+   let row = sel.closest("tr");
+   row.querySelector(".cust").value = d.customer;
+   row.querySelector(".sbal").value = d.balance;
+   row.querySelector(".srate").value = d.rate;
+ });
+}
+
+function loadPO(sel){
+ if(sel.value=="") return;
+ fetch("/get_po/"+sel.value)
+ .then(r=>r.json())
+ .then(d=>{
+   let row = sel.closest("tr");
+   row.querySelector(".sup").value = d.supplier;
+   row.querySelector(".pbal").value = d.balance;
+   row.querySelector(".prate").value = d.rate;
+   row.querySelector(".item").value = d.item;
+ });
+}
+
+function addRow(){
+ let table=document.getElementById("grid");
+ let row=table.rows[2].cloneNode(true);
+ row.querySelectorAll("input").forEach(i=>i.value="");
+ row.querySelectorAll("select").forEach(s=>s.selectedIndex=0);
+ table.appendChild(row);
+}
+
+</script>
+
+{% endblock %}

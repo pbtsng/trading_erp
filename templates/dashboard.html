@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+
+<a href="/sale" class="btn btn-success">Sale Order</a>
+<a href="/purchase" class="btn btn-warning">Purchase Order</a>
+<a href="/loading_advice" class="btn btn-info">Loading Advice</a>
+
+
+{% if session.role in ["admin","manager"] %}
+<hr>
+<a href="/accounts" class="btn btn-primary">Account Master</a>
+<a href="/items" class="btn btn-primary">Item Master</a>
+{% endif %}
+
+{% endblock %}
